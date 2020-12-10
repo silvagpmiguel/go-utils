@@ -1,7 +1,5 @@
 package utils
 
-import "hash/fnv"
-
 // Comparator func
 type Comparator func(interface{}, interface{}) int
 
@@ -31,10 +29,4 @@ func stringDescComparator(x, y interface{}) int {
 	} else {
 		return -1
 	}
-}
-
-func hash(s string) int {
-	h := fnv.New32a()
-	h.Write([]byte(s))
-	return int(h.Sum32())
 }
