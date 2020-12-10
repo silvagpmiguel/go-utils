@@ -47,8 +47,8 @@ func NewPQueue(comp Comparator) *PQueue {
 	}
 }
 
-// Push element to the queue
-func (q *PQueue) Push(val ...interface{}) *PQueue {
+// Enqueue element(s)
+func (q *PQueue) Enqueue(val ...interface{}) *PQueue {
 	for _, val := range val {
 		q.values = append(q.values, val)
 		q.bubbleUp(q.length)
@@ -71,16 +71,16 @@ func (q *PQueue) IsEmpty() bool {
 // Peek element to queue
 func (q *PQueue) Peek() (interface{}, error) {
 	if q.IsEmpty() {
-		return -1, fmt.Errorf("stack is empty")
+		return -1, fmt.Errorf("queue is empty")
 	}
 
 	return q.values[0], nil
 }
 
-// Pop element from the queue
-func (q *PQueue) Pop() (interface{}, error) {
+// Dequeue element
+func (q *PQueue) Dequeue() (interface{}, error) {
 	if q.IsEmpty() {
-		return -1, fmt.Errorf("stack is empty")
+		return -1, fmt.Errorf("queue is empty")
 	}
 
 	last := q.length - 1
