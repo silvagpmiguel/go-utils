@@ -19,25 +19,13 @@ type Tree struct {
 }
 
 // NewIntTree creates a new int tree
-func NewIntTree(asc bool) *Tree {
-	comp := intDescComparator
-
-	if asc {
-		comp = intAscComparator
-	}
-
-	return &Tree{comparator: comp}
+func NewIntTree() *Tree {
+	return &Tree{comparator: intAscComparator}
 }
 
 // NewStringTree creates a new string tree
-func NewStringTree(asc bool) *Tree {
-	comp := stringDescComparator
-
-	if asc {
-		comp = stringAscComparator
-	}
-
-	return &Tree{comparator: comp}
+func NewStringTree() *Tree {
+	return &Tree{comparator: stringAscComparator}
 }
 
 // NewTree creates a new tree ordered by a user defined comparator
@@ -54,9 +42,21 @@ func (t *Tree) Add(values ...interface{}) *Tree {
 	return t
 }
 
-// Search a value of the tree
-func (t *Tree) Search(value interface{}) *Node {
-	return t.node.search(t.comparator, value)
+// ContainsOne check if tree contains a specific value
+func (t *Tree) ContainsOne(val interface{}) bool {
+	return t.node.contains(t.comparator, val)
+}
+
+// Contains check if tree contains a list of values
+func (t *Tree) Contains(values ...interface{}) []bool {
+	arr := make([]bool, len(values))
+	comp := t.comparator
+
+	for i, val := range values {
+		arr[i] = t.node.contains(comp, val)
+	}
+
+	return arr
 }
 
 /** Remove TODO
@@ -77,33 +77,33 @@ func (t *Tree) Height() int {
 
 // Clone makes a copy of a tree
 func (t *Tree) Clone() *Tree {
-	cloned := &Tree{comparator: t.comparator}
-	t.node.clone(t.comparator, cloned)
-	return cloned
+	toClone := &Tree{comparator: t.comparator, length: t.length}
+	toClone.node = toClone.node.clone(t.node)
+	return toClone
 }
 
 // Length tree
-func (t *Tree) Length(value interface{}) int {
+func (t *Tree) Length() int {
 	return t.length
 }
 
 // InOrder returns a array of nodes in order
-func (t *Tree) InOrder() []*Node {
-	arr := []*Node{}
+func (t *Tree) InOrder() []interface{} {
+	var arr []interface{}
 	t.node.inOrder(&arr)
 	return arr
 }
 
 // PreOrder returns a array of nodes in pre order
-func (t *Tree) PreOrder() []*Node {
-	arr := []*Node{}
+func (t *Tree) PreOrder() []interface{} {
+	var arr []interface{}
 	t.node.preOrder(&arr)
 	return arr
 }
 
 // PosOrder returns a array of nodes in pos order
-func (t *Tree) PosOrder() []*Node {
-	arr := []*Node{}
+func (t *Tree) PosOrder() []interface{} {
+	var arr []interface{}
 	t.node.posOrder(&arr)
 	return arr
 }
@@ -115,10 +115,10 @@ func (t *Tree) String() string {
 	}
 
 	nodes := t.InOrder()
-	str := nodes[0].String()
+	str := fmt.Sprintf("%v", nodes[0])
 
 	for i := 1; i < len(nodes); i++ {
-		str += ", " + nodes[i].String()
+		str += fmt.Sprintf(", %v", nodes[i])
 	}
 
 	return "[" + str + "]"
@@ -136,10 +136,10 @@ func (n *Node) add(comp Comparator, val interface{}) *Node {
 		return &Node{val: val}
 	}
 
-	if comp(n.val, val) > 0 {
-		n.left = n.left.add(comp, val)
-	} else {
+	if comp(val, n.val) > 0 {
 		n.right = n.right.add(comp, val)
+	} else {
+		n.left = n.left.add(comp, val)
 	}
 
 	return n
@@ -157,24 +157,22 @@ func (n *Node) reverse() {
 	n.right.reverse()
 }
 
-func (n *Node) clone(comp Comparator, t *Tree) {
+func (n *Node) contains(comp Comparator, val interface{}) bool {
 	if n == nil {
-		return
+		return false
 	}
 
-	n.left.clone(comp, t)
-	t.node = t.node.add(comp, n.val)
-	n.right.clone(comp, t)
-}
+	flag := false
 
-func (n *Node) search(comp Comparator, val interface{}) *Node {
-	if comp(n.val, val) == 0 {
-		return n
-	} else if comp(n.val, val) > 0 {
-		return n.left.search(comp, val)
+	if n.val == val {
+		return true
+	} else if comp(val, n.val) > 0 {
+		flag = n.right.contains(comp, val)
 	} else {
-		return n.right.search(comp, val)
+		flag = n.left.contains(comp, val)
 	}
+
+	return flag
 }
 
 func (n *Node) height() int {
@@ -192,32 +190,44 @@ func (n *Node) height() int {
 	return lheight + 1
 }
 
-func (n *Node) inOrder(arr *[]*Node) {
+func (n *Node) clone(root *Node) *Node {
+	if root == nil {
+		return nil
+	}
+
+	n = &Node{val: root.val}
+	n.left = n.clone(root.left)
+	n.right = n.clone(root.right)
+
+	return n
+}
+
+func (n *Node) inOrder(arr *[]interface{}) {
 	if n == nil {
 		return
 	}
 
 	n.left.inOrder(arr)
-	*arr = append(*arr, n)
+	*arr = append(*arr, n.val)
 	n.right.inOrder(arr)
 }
 
-func (n *Node) preOrder(arr *[]*Node) {
+func (n *Node) preOrder(arr *[]interface{}) {
 	if n == nil {
 		return
 	}
 
-	*arr = append(*arr, n)
+	*arr = append(*arr, n.val)
 	n.left.preOrder(arr)
 	n.right.preOrder(arr)
 }
 
-func (n *Node) posOrder(arr *[]*Node) {
+func (n *Node) posOrder(arr *[]interface{}) {
 	if n == nil {
 		return
 	}
 
 	n.left.posOrder(arr)
 	n.right.posOrder(arr)
-	*arr = append(*arr, n)
+	*arr = append(*arr, n.val)
 }
