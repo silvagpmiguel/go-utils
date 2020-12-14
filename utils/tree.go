@@ -59,10 +59,35 @@ func (t *Tree) Contains(values ...interface{}) []bool {
 	return arr
 }
 
-/** Remove TODO
+// RemoveMin value
+func (t *Tree) RemoveMin() (*Tree, error) {
+	if t.length == 0 {
+		return nil, fmt.Errorf("tree is empty")
+	}
+
+	aux := t.Clone()
+	aux.length--
+	aux.node.removeMin()
+	return aux, nil
+}
+
+// RemoveMax value
+func (t *Tree) RemoveMax() (*Tree, error) {
+	if t.length == 0 {
+		return nil, fmt.Errorf("tree is empty")
+	}
+
+	aux := t.Clone()
+	aux.length--
+	aux.node.removeMax()
+	return aux, nil
+}
+
+// Remove a value from the tree
 func (t *Tree) Remove(value interface{}) *Tree {
+	t.node.remove(value)
 	return t
-}*/
+}
 
 // Reverse tree
 func (t *Tree) Reverse() *Tree {
@@ -80,6 +105,11 @@ func (t *Tree) Clone() *Tree {
 	toClone := &Tree{comparator: t.comparator, length: t.length}
 	toClone.node = toClone.node.clone(t.node)
 	return toClone
+}
+
+// IsEmpty tree
+func (t *Tree) IsEmpty() bool {
+	return t.length == 0
 }
 
 // Length tree
@@ -188,6 +218,41 @@ func (n *Node) height() int {
 	}
 
 	return lheight + 1
+}
+
+// TODO
+func (n *Node) remove(value interface{}) *Node {
+	return n
+}
+
+func (n *Node) removeMin() *Node {
+	if n.left == nil {
+		if n.right == nil {
+			return nil
+		}
+		return n.remove(n.right.val)
+	}
+
+	for ; n.left.left != nil; n = n.left {
+	}
+	n.left = nil
+
+	return n
+}
+
+func (n *Node) removeMax() *Node {
+	if n.right == nil {
+		if n.left == nil {
+			return nil
+		}
+		return n.remove(n.right.val)
+	}
+
+	for ; n.right.right != nil; n = n.right {
+	}
+	n.right = nil
+
+	return n
 }
 
 func (n *Node) clone(root *Node) *Node {
