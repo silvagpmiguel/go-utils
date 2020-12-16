@@ -67,7 +67,7 @@ func (t *Tree) RemoveMin() (*Tree, error) {
 
 	aux := t.Clone()
 	aux.length--
-	aux.node.removeMin()
+	aux.node.removeMin(t.comparator)
 	return aux, nil
 }
 
@@ -79,14 +79,23 @@ func (t *Tree) RemoveMax() (*Tree, error) {
 
 	aux := t.Clone()
 	aux.length--
-	aux.node.removeMax()
+	aux.node.removeMax(t.comparator)
 	return aux, nil
 }
 
-// Remove a value from the tree
-func (t *Tree) Remove(value interface{}) *Tree {
-	t.node.remove(value)
-	return t
+// TODO
+func (t *Tree) Remove(values ...interface{}) (*Tree, error) {
+	aux := t.Clone()
+
+	for _, val := range values {
+		if aux.length == 0 {
+			return nil, fmt.Errorf("tree is empty")
+		}
+
+		aux.node.remove(t.comparator, val)
+	}
+
+	return aux, nil
 }
 
 // Reverse tree
@@ -220,39 +229,173 @@ func (n *Node) height() int {
 	return lheight + 1
 }
 
-// TODO
-func (n *Node) remove(value interface{}) *Node {
-	return n
+/**
+if comp(value, n.val) > 0 {
+	n.right.remove(comp, value)
+} else if comp(value, n.val) < 0 {
+	n.left.remove(comp, value)
+} else {
+	var temp *Node
+	if n.left == nil {
+		if n.right != nil {
+			temp = n.right
+		}
+		n = nil
+		return
+	} else if n.right == nil {
+		if n.left != nil {
+			temp = n.left
+		}
+		n = nil
+		return
+	}
+
+	temp = n.right
+	for temp != nil {
+		temp = n.left
+	}
+
+	n.val = temp.val
+
+	n.right.remove(comp, value)
+}
+**/
+
+func (n *Node) findNode(comp Comparator, val interface{}) *Node {
+	if n == nil {
+		return nil
+	}
+	var aux *Node
+	if comp(val, n.val) == 0 {
+		return n
+	} else if comp(val, n.val) > 0 {
+		aux = n.right.findNode(comp, val)
+	} else {
+		aux = n.left.findNode(comp, val)
+	}
+
+	return aux
 }
 
-func (n *Node) removeMin() *Node {
+// TODO
+func (n *Node) remove(comp Comparator, value interface{}) {
+	var p, parent, succ, succParent *Node
+
+	/* Find the node with search value == "x" in the BST */
+	fmt.Print(value)
+	fmt.Print(" - ")
+	p = n.findNode(comp, value)
+	fmt.Println(p)
+
+	if p == nil {
+		return
+	}
+
+	/** Case 1: p has no children nodes **/
+	if p.left == nil && p.right == nil {
+		if p == n {
+			n = nil
+			return
+		}
+
+		parent = p
+
+		/* Delete p from p's parent */
+		if parent.left == p {
+			parent.left = nil
+		} else {
+			parent.right = nil
+		}
+
+		return
+	}
+
+	/** Case 2: p has 1 child node **/
+	if p.right == nil {
+		if p == n {
+			n = n.left
+			return
+		}
+
+		parent = p
+
+		/* Link p's left child as p's parent child */
+		if parent.left == p {
+			parent.left = p.left
+		} else {
+			parent.right = p.left
+		}
+		return
+	}
+
+	if p.left == nil {
+
+		if p == n {
+			n = n.right
+			return
+		}
+
+		parent = p
+
+		if parent.left == p {
+			parent.left = p.right
+		} else {
+			parent.right = p.right
+		}
+		return
+	}
+
+	/**
+		Handle case 3: node has 2 children - find successor of p
+		succ(p) is as as follows:  1 step right, all the way left
+		Note: succ(p) has NOT left child !
+	**/
+
+	if p.right.left == nil {
+		p.val = p.right.val
+		p.right = p.right.right
+		return
+	}
+
+	succ = p.right
+	succParent = p
+
+	/* Find the successor node of node p and successor's parent node */
+	for succ.left != nil {
+		succParent = succ
+		succ = succ.left
+	}
+
+	p.val = succ.val
+	succParent.left = succ.right
+
+	return
+}
+
+func (n *Node) removeMin(comp Comparator) {
 	if n.left == nil {
 		if n.right == nil {
-			return nil
+			n = nil
 		}
-		return n.remove(n.right.val)
+		n.remove(comp, n.right.val)
 	}
 
 	for ; n.left.left != nil; n = n.left {
 	}
 	n.left = nil
-
-	return n
 }
 
-func (n *Node) removeMax() *Node {
+func (n *Node) removeMax(comp Comparator) {
 	if n.right == nil {
 		if n.left == nil {
-			return nil
+			n = nil
 		}
-		return n.remove(n.right.val)
+		n.remove(comp, n.right.val)
 	}
 
 	for ; n.right.right != nil; n = n.right {
 	}
 	n.right = nil
-
-	return n
 }
 
 func (n *Node) clone(root *Node) *Node {
