@@ -96,6 +96,7 @@ func TestPosOrder(t *testing.T) {
 	}
 }
 
+/*
 func TestRemoveMin(t *testing.T) {
 	afterRemove, err := intTree.RemoveMin()
 	t.Logf("Remove min of %v: %v\n", intTree, afterRemove)
@@ -103,17 +104,15 @@ func TestRemoveMin(t *testing.T) {
 	t.Logf("Remove min of %v: %v\n", intTree, afterRemove)
 	afterRemove, err = afterRemove.RemoveMin()
 	t.Logf("Remove min of %v: %v\n", intTree, afterRemove)
-	afterRemove, err = afterRemove.RemoveMin()
-	t.Logf("Remove min of %v: %v\n", intTree, afterRemove)
-	afterRemove, err = afterRemove.RemoveMin()
-	t.Logf("Remove min of %v: %v\n", intTree, afterRemove)
+
 	t.Logf("Error: %v", err)
 	if !afterRemove.IsEmpty() {
 		t.Log("Remove min failed!")
 		t.FailNow()
 	}
-}
+}*/
 
+/*
 func TestRemoveMax(t *testing.T) {
 	afterRemove, err := intTree.RemoveMax()
 	t.Logf("Remove max of %v: %v\n", intTree, afterRemove)
@@ -128,6 +127,17 @@ func TestRemoveMax(t *testing.T) {
 	t.Logf("Error: %v", err)
 	if !afterRemove.IsEmpty() {
 		t.Log("Remoive max failed!")
+		t.FailNow()
+	}
+}*/
+
+func TestRemove(t *testing.T) {
+	afterRemove, err := intTree.Remove(2)
+
+	t.Logf("Remove 2: %v\n", afterRemove)
+	t.Logf("Error: %v", err)
+	if !afterRemove.IsEmpty() {
+		t.Log("Remove min failed!")
 		t.FailNow()
 	}
 }
