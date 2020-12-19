@@ -93,6 +93,7 @@ func (t *Tree) Remove(values ...interface{}) (*Tree, error) {
 		}
 
 		aux.node.remove(t.comparator, val)
+		aux.length--
 	}
 
 	return aux, nil
