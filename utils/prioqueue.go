@@ -119,7 +119,7 @@ func (q *PQueue) String() string {
 	return "[" + str + "]"
 }
 
-/** Private Aux Methods **/
+/* Private Aux Methods */
 
 func (q *PQueue) bubbleDown(start, end int) {
 	length := q.length
