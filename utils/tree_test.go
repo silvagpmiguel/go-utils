@@ -151,7 +151,6 @@ func TestRemove(t *testing.T) {
 	t.Logf("Remove 3 from [3, 4, 5]: %v", clone)
 	clone.Remove(5, 4)
 	t.Logf("Remove 5, 4 from [4, 5]: %v", clone)
-	t.Log(intTree.Remove(1, 2, 3, 4, 5, 6))
 
 	if !clone.IsEmpty() {
 		t.Log("Remove min failed!")
