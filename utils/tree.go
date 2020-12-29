@@ -98,8 +98,12 @@ func (t *Tree) Remove(values ...interface{}) error {
 			return fmt.Errorf("tree is empty")
 		}
 
-		if t.node.val == values[i] {
+		if t.length == 1 {
+			t.node = nil
+		} else if t.node.val == values[i] {
+			aux := t.node.left
 			t.node = t.node.right
+			t.node.left = aux
 		} else {
 			err := t.node.remove(t.comparator, values[i], t.node)
 
@@ -107,6 +111,7 @@ func (t *Tree) Remove(values ...interface{}) error {
 				return err
 			}
 		}
+
 		t.length--
 	}
 

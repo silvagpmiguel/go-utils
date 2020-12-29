@@ -143,11 +143,11 @@ func TestRemoveMax(t *testing.T) {
 
 func TestRemove(t *testing.T) {
 	clone := intTree.Clone()
-	clone.Remove(2)
+	clone.Remove(3)
 	t.Logf("Remove 2 from [1, 2, 3, 4, 5]: %v", clone)
 	clone.Remove(1)
 	t.Logf("Remove 1 from [1, 3, 4, 5]: %v", clone)
-	clone.Remove(3)
+	clone.Remove(2)
 	t.Logf("Remove 3 from [3, 4, 5]: %v", clone)
 	clone.Remove(5, 4)
 	t.Logf("Remove 5, 4 from [4, 5]: %v", clone)
