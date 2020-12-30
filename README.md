@@ -7,5 +7,5 @@ This is a repository that provides some useful structures / functions for those 
 
 ## Structures
 
-- Binary Tree `(utils/tree.go)`
+- Binary Search Tree `(utils/tree.go)`
 - Priority Queue `(utils/prioqueue.go)`
